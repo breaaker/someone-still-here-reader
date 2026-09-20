@@ -1,5 +1,6 @@
 """阅读器构建工具的回归测试：确保正文改动后网页可重建、且不会泄露内部资料。"""
 
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -119,6 +120,26 @@ class SiteRenderingTests(unittest.TestCase):
         broken = site.replace('<section class="chapter" data-title="第二章　乙">', "")
         with self.assertRaises(reader_build.BuildError):
             reader_build.validate_site(broken, chapters)
+
+
+class InteractionRegressionTests(unittest.TestCase):
+    """手机端点击相关的事故回归。"""
+
+    def test_closed_scrim_does_not_swallow_taps(self):
+        """手机端 .scrim 是铺满屏幕的透明遮罩（z-index 高于工具栏）。
+
+        一旦缺少 pointer-events: none，它会在目录关闭时吃掉所有点击，
+        表现为「所有按钮都按不动」——2026-09-20 真实发生过一次。
+        """
+        template = (reader_build.ROOT / "reader" / "template.html").read_text(encoding="utf-8")
+        match = re.search(r"\.scrim\s*\{(?P<body>[^}]*)\}", template)
+        self.assertIsNotNone(match, "模板里找不到 .scrim 规则")
+        self.assertIn("pointer-events: none", match.group("body"))
+
+    def test_menu_open_re_enables_scrim(self):
+        template = (reader_build.ROOT / "reader" / "template.html").read_text(encoding="utf-8")
+        self.assertIn("body.menu-open .scrim", template)
+        self.assertIn("pointer-events: auto", template)
 
 
 class RepositoryGuardTests(unittest.TestCase):

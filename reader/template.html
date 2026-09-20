@@ -441,6 +441,9 @@
       padding: 0;
       background: rgba(12, 17, 19, .48);
       opacity: 0;
+      /* 手机端它只是 display:block 的透明遮罩；不写 pointer-events:none 就会
+         盖在工具栏之上吞掉全部点击，表现为「所有按钮都按不动」。 */
+      pointer-events: none;
       transition: opacity .22s ease;
     }
 
@@ -801,6 +804,9 @@
 
       let scrollTicking = false;
       window.addEventListener('scroll', () => {
+        // 回到顶部按钮同步切换，不依赖 rAF 回调按时到达；
+        // 进度条较重，仍旧按帧节流。
+        toTop.classList.toggle('show', window.scrollY > 700);
         if (scrollTicking) return;
         scrollTicking = true;
         window.requestAnimationFrame(() => { scrollTicking = false; paintProgress(); });
