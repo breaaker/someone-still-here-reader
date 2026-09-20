@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="《此处仍有人》原创恐怖长篇在线阅读">
+  <meta name="theme-color" content="#e7e6e1">
+  <meta name="color-scheme" content="light dark">
+  <title>此处仍有人</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23232b30'/%3E%3Cpath d='M20 15h22a3 3 0 0 1 3 3v28l-14-7-14 7V18a3 3 0 0 1 3-3Z' fill='%23c98070'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #e7e6e1;
+      --paper-deep: #dbdad3;
+      --surface: rgba(244, 243, 238, 0.82);
+      --surface-solid: #f2f1ec;
+      --ink: #23282c;
+      --muted: #6b7278;
+      --line: rgba(35, 40, 44, 0.14);
+      --accent: #8a3f36;
+      --accent-soft: rgba(138, 63, 54, 0.10);
+      --slate: #2b3339;
+      --brass: #a8884f;
+      --shadow: 0 16px 48px rgba(32, 38, 42, 0.10);
+      --reading-size: 19px;
+      --reading-leading: 1.95;
+      --paragraph-gap: 1.25em;
+      --reading-font: "Songti SC", STSong, "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif;
+    }
+
+    [data-theme="night"] {
+      color-scheme: dark;
+      --paper: #12171a;
+      --paper-deep: #0c1113;
+      --surface: rgba(27, 34, 38, 0.86);
+      --surface-solid: #1b2226;
+      --ink: #d3d8d7;
+      --muted: #8e999b;
+      --line: rgba(211, 216, 215, 0.13);
+      --accent: #c98070;
+      --accent-soft: rgba(201, 128, 112, 0.12);
+      --slate: #0e1316;
+      --brass: #c2a86b;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 84% 6%, rgba(168, 136, 79, 0.10), transparent 30rem),
+        radial-gradient(circle at 8% 92%, rgba(138, 63, 54, 0.06), transparent 26rem),
+        linear-gradient(160deg, var(--paper-deep), var(--paper) 45%, var(--paper-deep));
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      transition: background .25s ease, color .25s ease;
+      overflow-wrap: break-word;
+    }
+
+    button { font: inherit; color: inherit; }
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .progress {
+      position: fixed;
+      z-index: 60;
+      inset: 0 0 auto;
+      height: 3px;
+      background: transparent;
+      pointer-events: none;
+    }
+    .progress > span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--brass));
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    /* ---------- sidebar ---------- */
+    .sidebar {
+      position: fixed;
+      z-index: 40;
+      inset: 0 auto 0 0;
+      width: 286px;
+      display: flex;
+      flex-direction: column;
+      padding: 26px 18px 18px;
+      background: var(--surface-solid);
+      border-right: 1px solid var(--line);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 2px 6px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(150deg, var(--slate), var(--accent));
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+    }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 11px 12px;
+      border: 2px solid rgba(255, 255, 255, .74);
+      border-radius: 2px 2px 6px 6px;
+      border-top-width: 5px;
+    }
+    .brand-kicker {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .brand-title {
+      font-family: var(--reading-font);
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      margin-top: 3px;
+    }
+    .sidebar-label {
+      margin: 18px 6px 10px;
+      font-size: 11px;
+      letter-spacing: .2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .chapter-list {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 4px;
+      flex: 1 1 auto;
+    }
+    .chapter-list li { margin: 0 0 2px; }
+    .volume-label {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin: 14px 6px 6px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      font-size: 11.5px;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .chapter-list li:first-child .volume-label { margin-top: 0; padding-top: 0; border-top: 0; }
+    .volume-label b { color: var(--accent); font-weight: 600; }
+    .chapter-button {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 10px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      line-height: 1.45;
+      transition: background .16s ease, color .16s ease;
+    }
+    .chapter-button:hover { background: var(--accent-soft); }
+    .chapter-button[aria-current="true"] {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    .chapter-number {
+      flex: 0 0 auto;
+      font-size: 12px;
+      color: var(--muted);
+      padding-top: 2px;
+    }
+    .chapter-button[aria-current="true"] .chapter-number { color: var(--accent); }
+    .chapter-name { font-size: 14.5px; }
+    .sidebar-foot {
+      margin-top: 14px;
+      padding: 12px 6px 0;
+      border-top: 1px solid var(--line);
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ---------- main ---------- */
+    .main {
+      grid-column: 2;
+      padding: 84px 26px calc(52px + env(safe-area-inset-bottom));
+      min-width: 0;
+    }
+
+    .toolbar-wrap {
+      position: fixed;
+      z-index: 30;
+      top: calc(14px + env(safe-area-inset-top));
+      right: 22px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .toolbar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .tool-button {
+      display: inline-grid;
+      place-items: center;
+      min-width: 38px;
+      height: 36px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--ink);
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: background .16s ease;
+    }
+    .tool-button:hover { background: var(--accent-soft); }
+    .tool-button svg { width: 19px; height: 19px; }
+    .menu-button { display: none; }
+    .tool-divider { width: 1px; height: 20px; background: var(--line); margin: 0 3px; }
+
+    .reader-settings {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 268px;
+      padding: 16px 16px 6px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface-solid);
+      box-shadow: var(--shadow);
+      display: none;
+    }
+    .reader-settings.open { display: block; }
+    .settings-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13.5px;
+    }
+    .reset-button {
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+    .setting-row { padding: 9px 0 12px; }
+    .setting-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .setting-value { color: var(--accent); font-variant-numeric: tabular-nums; }
+    .font-select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .setting-range {
+      width: 100%;
+      height: 22px;
+      margin: 0;
+      accent-color: var(--accent);
+      background: transparent;
+    }
+
+    .reading-card {
+      max-width: 748px;
+      margin: 0 auto;
+      padding: 46px 54px 52px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .book-title {
+      margin: 0;
+      text-align: center;
+      font-size: 11.5px;
+      letter-spacing: .34em;
+      color: var(--muted);
+      text-indent: .34em;
+    }
+    .chapter-title {
+      margin: 14px 0 0;
+      text-align: center;
+      font-family: var(--reading-font);
+      font-size: calc(var(--reading-size) * 1.42);
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: .02em;
+    }
+    .chapter-ornament {
+      display: flex;
+      justify-content: center;
+      margin: 16px 0 30px;
+      color: var(--brass);
+    }
+    .chapter-ornament span { font-size: 9px; letter-spacing: .5em; text-indent: .5em; }
+
+    .chapter { display: none; }
+    .chapter.active { display: block; }
+
+    .prose {
+      font-family: var(--reading-font);
+      font-size: var(--reading-size);
+      line-height: var(--reading-leading);
+      letter-spacing: .01em;
+    }
+    .prose p {
+      margin: 0 0 var(--paragraph-gap);
+      text-align: left;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose blockquote {
+      margin: 0 0 var(--paragraph-gap);
+      padding: 12px 16px;
+      border-left: 3px solid var(--brass);
+      border-radius: 0 8px 8px 0;
+      background: var(--accent-soft);
+      color: var(--ink);
+      font-size: calc(var(--reading-size) * .94);
+      line-height: calc(var(--reading-leading) * .95);
+    }
+    .prose blockquote p { margin: 0 0 .5em; }
+    .prose blockquote p:last-child { margin-bottom: 0; }
+    .scene-break {
+      display: flex;
+      justify-content: center;
+      margin: calc(var(--paragraph-gap) * 1.5) 0;
+      color: var(--brass);
+      font-size: 9px;
+      letter-spacing: .7em;
+      text-indent: .7em;
+    }
+
+    .chapter-nav {
+      max-width: 748px;
+      margin: 22px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .nav-button {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      transition: background .16s ease, transform .16s ease;
+    }
+    .nav-button:hover:not(:disabled) { background: var(--surface-solid); transform: translateY(-1px); }
+    .nav-button:disabled { opacity: .45; cursor: default; }
+    .nav-button.next { text-align: right; align-items: flex-end; }
+    .nav-caption { font-size: 11px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+    .nav-label { font-family: var(--reading-font); font-size: 15px; line-height: 1.5; }
+
+    .to-top {
+      position: fixed;
+      z-index: 28;
+      right: 20px;
+      bottom: calc(20px + env(safe-area-inset-bottom));
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .2s ease, transform .2s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .to-top svg { width: 18px; height: 18px; }
+
+    .scrim {
+      position: fixed;
+      z-index: 35;
+      inset: 0;
+      display: none;
+      border: 0;
+      padding: 0;
+      background: rgba(12, 17, 19, .48);
+      opacity: 0;
+      transition: opacity .22s ease;
+    }
+
+    /* ---------- mobile ---------- */
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: minmax(0, 1fr); }
+      .sidebar {
+        width: min(84vw, 330px);
+        transform: translate3d(-102%, 0, 0);
+        transition: transform .26s cubic-bezier(.22, .61, .36, 1);
+        padding-top: calc(22px + env(safe-area-inset-top));
+        box-shadow: 0 0 60px rgba(12, 17, 19, .22);
+      }
+      body.menu-open .sidebar { transform: translate3d(0, 0, 0); }
+      .scrim { display: block; }
+      body.menu-open .scrim { opacity: 1; pointer-events: auto; }
+      .main { grid-column: 1; padding: 78px 12px calc(44px + env(safe-area-inset-bottom)); }
+      .menu-button { display: inline-grid; }
+      .toolbar-wrap {
+        left: 12px;
+        right: 12px;
+        top: calc(10px + env(safe-area-inset-top));
+      }
+      .toolbar { width: 100%; justify-content: space-between; }
+      .reader-settings { right: 0; left: 0; width: auto; }
+      .reading-card {
+        border-radius: 16px;
+        padding: 32px 20px 36px;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: var(--surface-solid);
+      }
+      .chapter-nav { grid-template-columns: 1fr; }
+      .nav-button.next { text-align: left; align-items: flex-start; }
+      .prose { letter-spacing: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @media print {
+      .sidebar, .toolbar-wrap, .chapter-nav, .progress, .to-top, .scrim { display: none !important; }
+      .main { padding: 0; }
+      .reading-card { border: 0; box-shadow: none; padding: 0; max-width: none; }
+      .chapter { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <button class="scrim" id="scrim" type="button" aria-label="关闭章节目录"></button>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="章节目录">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-kicker">Serial Reader</div>
+          <div class="brand-title">此处仍有人</div>
+        </div>
+      </div>
+
+      <div class="sidebar-label">章节目录</div>
+      <ol class="chapter-list" id="chapterList">
+        <li class="volume-label">
+          <b>卷01</b><span>十三层维修单</span>
+        </li>
+        <li>
+          <button class="chapter-button" type="button" data-go="0" aria-current="true">
+            <span class="chapter-number">第一章</span>
+            <span class="chapter-name">多出来的一天</span>
+          </button>
+        </li>
+        <li>
+          <button class="chapter-button" type="button" data-go="1" aria-current="false">
+            <span class="chapter-number">第二章</span>
+            <span class="chapter-name">台账在谁手里</span>
+          </button>
+        </li>
+      </ol>
+
+      <div class="sidebar-foot">原创恐怖长篇 · 连载中<br>已更新 2 章 · 约 8,470 字<br>本页只收录正文，不含作者资料。</div>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar-wrap">
+        <div class="toolbar" role="toolbar" aria-label="阅读设置">
+          <button class="tool-button menu-button" id="menuButton" type="button" aria-label="打开章节目录" aria-expanded="false" aria-controls="sidebar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <button class="tool-button" id="smallerText" type="button" aria-label="缩小字号">A−</button>
+          <button class="tool-button" id="largerText" type="button" aria-label="放大字号">A+</button>
+          <div class="tool-divider" aria-hidden="true"></div>
+          <button class="tool-button" id="settingsButton" type="button" aria-label="打开排版设置" aria-expanded="false" aria-controls="readerSettings">Aa</button>
+          <button class="tool-button" id="themeButton" type="button" aria-label="切换夜间模式">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg>
+          </button>
+          <div class="reader-settings" id="readerSettings" aria-label="排版设置">
+            <div class="settings-heading">
+              <strong>排版设置</strong>
+              <button class="reset-button" id="resetTypography" type="button">恢复默认</button>
+            </div>
+            <div class="setting-row">
+              <label class="setting-label" for="fontSelect"><span>正文字体</span></label>
+              <select class="font-select" id="fontSelect">
+                <option value="songti">宋体 · 沉浸阅读</option>
+                <option value="kaiti">楷体 · 书卷气</option>
+                <option value="fangsong">仿宋 · 典籍感</option>
+                <option value="heiti">黑体 · 清晰简洁</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label class="setting-label" for="lineHeightRange"><span>行间距</span><span class="setting-value" id="lineHeightValue">1.95</span></label>
+              <input class="setting-range" id="lineHeightRange" type="range" min="1.4" max="2.6" step="0.05" value="1.95">
+            </div>
+            <div class="setting-row">
+              <label class="setting-label" for="paragraphGapRange"><span>段间距</span><span class="setting-value" id="paragraphGapValue">1.25</span></label>
+              <input class="setting-range" id="paragraphGapRange" type="range" min="0.2" max="2.4" step="0.05" value="1.25">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <article class="reading-card" id="readingCard">
+        <p class="book-title">此处仍有人</p>
+        <h1 class="chapter-title" id="chapterTitle">第一章　多出来的一天</h1>
+        <div class="chapter-ornament" aria-hidden="true"><span>◆◆◆</span></div>
+        <section class="chapter active" data-title="第一章　多出来的一天">
+
+          <div class="prose">
+
+            <p>周三下午四点二十，唐绪在图书馆四楼抄一段口述记录，抄到第三行停了笔。</p>
+            <p>受访人是个七十八岁的老太太，讲的是六十年前住的筒子楼里“半夜有人推煤车”的事。她说那声音从走廊东头来，推到西头就没了，一共推了七趟，第七趟以后，楼道里的声控灯全亮了，但没有人。</p>
+            <p>唐绪在旁边空白处写了两行：</p>
+            <blockquote>
+              <p>讲述人未提煤车来源。<br>楼里当年是否真有煤车？待核。</p>
+            </blockquote>
+            <p>他习惯这么干。录音笔里存着六十多个小时的东西，手机相册分了二十七个文件夹，名字只有他自己看得懂：“老楼_声音传闻_未核”“老楼_平面图_待补”“她那边的资料”。最后那个文件夹里有十九张图，是同一栋楼不同年份的楼道照片，拍摄时间是今年八月。</p>
+            <p>他合上本子的时候，手机震了。</p>
+            <p>“喂，妈。”</p>
+            <p>“你在哪？”</p>
+            <p>“图书馆。”</p>
+            <p>“吃饭了吗？”</p>
+            <p>“一会儿。”</p>
+            <p>“一会儿是几点。”她妈不是问句，是一句宣告，“你回来吃，我炖了排骨。”</p>
+            <p>唐绪看了一眼时间。四点二十四。从这里坐地铁回去四十分钟，到家差不多五点半，正好。</p>
+            <p>“回。”他说，“要不要我顺路买什么？”</p>
+            <p>“买一罐豆瓣酱，小罐的。”</p>
+            <p>“上次那罐还没吃完吧。”</p>
+            <p>“你妹妹吃辣，你又不吃。”她妈说完这句，自己停住了。</p>
+            <p>电话两头都安静了两秒。唐绪握着笔，笔尖悬在本子上。</p>
+            <p>“她这两天有消息吗？”他问。</p>
+            <p>“没有。”她妈说，“我昨天去派出所问过了。”</p>
+            <p>“他们说什么？”</p>
+            <p>“说在查。”她妈的声音变得很平，像把一件东西放回原处，“说让我别天天去，天天去也没用。”</p>
+            <p>“我明天去一趟。”</p>
+            <p>“你去有什么用，你又不是警察。”</p>
+            <p>“我去看看。”</p>
+            <p>“你别乱跑。”她妈说，“你妹妹就是乱跑。”</p>
+            <p>挂了电话，唐绪坐了半分钟，然后把本子翻回前面几页。</p>
+            <p>唐禾十六岁，职校二年级，课余在区文化馆的声音档案室跟师傅干活。她会做录音数字化，会修掉磁带里的杂音，会跟人解释为什么一段四十年前的开会录音里能听见窗外卖冰棍的喇叭。她师傅说她手巧，就是坐不住。</p>
+            <p>八月二十一号晚上她出门，说去同学家拿东西。九点四十她给唐绪打过一个电话，两个人吵了一架，吵的内容是“你要不要听我一句”“你从来没听我说完过”。十点零七分她发来一条四十七秒的语音，说“哥，你听我说一件事”，然后就断了。</p>
+            <p>那是唐绪最后一次听见她的声音。</p>
+            <p>第二天早上他们发现她没回来。当天下午她妈去派出所登记，民警说十六岁不到十八，属于未成年人，先按“擅自离家”登记，二十四小时内如果还没消息就转正式立案。第二天转的。</p>
+            <p>这十九天里，她妈去派出所七次，去文化馆三次，去唐禾同学家两次，把这条街上的监控能问到的地方都问了一遍：小区门口的摄像头、公交站台、那家便利店的、对面修车摊自己装的那个。所有画面里没有她。她手机从八月二十一号晚上十点十一分起再没有过任何活动，微信、支付、公交卡，全都停在那里。</p>
+            <p>一个活人从这座城市里消失，留下的东西少得可怜，而且齐整。齐整得像有人把时间轴剪掉了一段，接口还对着。</p>
+            <p>唐绪把本子合上，装进包里。他不是学这个的。他学的是机械工程，辅修民俗，说白了就是两样都不精。他懂一点电工原理，会看图纸，会拆小电器；他也知道丧仪里的方位讲究和建筑图纸上的朝向标注是两套坐标系，混着用要出事。这些本事在找一个人这件事上，没有一样有用。</p>
+            <p>但他会理线。</p>
+            <p>他把每一条消息、每一次通话、每一个能问到的时间点写在纸上，按小时排。排到第十天的时候他发现一个坑：八月二十一号晚上十点十一分之后，所有记录同时停住，不是慢慢变少，是同一分钟全部停住。这不像一个人走丢了。这像一个人被从某个表格里删掉了。</p>
+            <p>那天晚上他跟他妈说，他去文化馆问问。</p>
+            <p>“问了也没用。”他妈说。</p>
+            <p>他还是去了。</p>
+            <div class="scene-break" aria-hidden="true"><span>◆◆◆</span></div>
+            <p>第二天中午，唐绪在区文化馆三楼走廊上站了二十分钟。</p>
+            <p>声档室的门锁着。隔壁办公室的人告诉他师傅上周退休了，交接还没办完，唐禾的东西收在储物间的一个纸箱里，“家属可以看看，别拿走，要登记”。</p>
+            <p>那箱东西不多：一个旧耳机，一副没织完的手套，两盒磁带，一本翻得很烂的软面笔记本。唐绪蹲在地上翻了半小时。</p>
+            <p>笔记本是唐禾自己写的。不是日记，是工作记录：哪盘带子是几几年进来的，谁送来的，哪一段有杂音，怎么修的。字很小，写得很挤，前几页还画了个表格。唐绪认得这个表格模板，是他去年帮她做的，用表格软件排录音编号，她嫌丑，说“你这做得像工单”。</p>
+            <p>他停在这一页。</p>
+            <blockquote>
+              <p>8月14日　A-37　老救援录音　3'12"<br>底噪不是磁带老化。像管子里的风。<br>问师傅，师傅说是当年录的时候离通风口近。<br>但两段之间的风不一样大。中间一段没有。<br>记一下。</p>
+            </blockquote>
+            <p>唐绪把这页拍了照。</p>
+            <p>“管子里”这三个字他见过。就在上周，他整理唐禾手机里导出来的那几条语音时，听见她最后那条语音的背景里有很轻的风声，像是从很长的管道里传上来的。他当时以为她在外面，或者在地下室——她干活那间储藏间确实在地下——就没多想。</p>
+            <p>现在两处对上了。</p>
+            <p>他继续往后翻。最后一页是八月二十号，只写了一行：</p>
+            <blockquote>
+              <p>明天问问师傅，能不能把那盘带子单独听听。</p>
+            </blockquote>
+            <p>八月二十一号，她出门。</p>
+            <p>唐绪把笔记本放回箱子，站起来的时候腿麻了。他跟隔壁办公室的人登记了姓名和关系，写了联系电话，问：“那盘 A-37 还在吗？”</p>
+            <p>“什么？”</p>
+            <p>“A-37，她自己编的号。”</p>
+            <p>那人翻了翻电脑：“没有这个号的登记。”</p>
+            <p>“她笔记本上有。”</p>
+            <p>“那可能是没上系统。”那人说，“上个礼拜有一批东西送去市里做数字化了，具体我不清楚。”</p>
+            <p>唐绪记下了这句话。他走出文化馆的时候是下午一点多，太阳很大，他在台阶上站了一会儿，想的是同一件事：她写在本子上的东西，为什么不在系统里。</p>
+            <p>他不是警察，问不到更细的。他能做的只有一件小事：把他在学校里能查到的公开档案查一遍。</p>
+            <div class="scene-break" aria-hidden="true"><span>◆◆◆</span></div>
+            <p>这件事他拖了十九天，今天下午才真的动手。</p>
+            <p>区里的老建筑在城建档案网站上有一部分电子化的图纸，谁都能下，就是要一栋一栋找。他按唐禾那条街上写过的地址，一栋一栋往下翻，翻到第二十七栋的时候停住了。</p>
+            <p>喻家巷十七号，商住混合，1998 年竣工，地上十二层。</p>
+            <p>他把图纸放大，一张一张看：一层到十二层的平面图，电梯井位置，楼梯位置，机房标注。</p>
+            <p>然后他去看另一份材料——这栋楼的物业公司在网上挂过的历年维修公示，本来只是一张张拍得歪歪斜斜的表格照片，扫描质量很差，字都要看不清。</p>
+            <p>唐绪不是电工，也不是维保工，他不能靠看一张扫描件判断电梯好坏。他看的是别的东西：日期。</p>
+            <p>他做了这次调查唯一一件他会做的事。</p>
+            <p>他新建了一个表格，一列是公示单上的日期，一列是他自己算出来的日期——根据公示的编号规则，同一家物业用的同一批单子，编号是连着的，编号之间的间隔天数应该是稳定的。</p>
+            <p>前二十几张都对得上。</p>
+            <p>第二十三张开始不对。</p>
+            <p>日期一列比编号推出来的时间晚了一天。不是整批都错，是从第二十三张开始错，错一张就回到正轨，隔几张又错一张。他把鼠标往下拖，越拖越慢。</p>
+            <p>错位的那几张单子里，有三张挤在挨着的编号上。它们的日期栏全都比编号推出来的时间多一天，三张连着，中间没有再断开。他把鼠标放大又看了一遍，剩下的错位都是零零散散的，只有这三张，紧挨在一起。</p>
+            <p>而这三张单子的登记时间，落在八月十四号到八月二十一号之间。</p>
+            <p>就是唐禾记下 A-37 的那一周。</p>
+            <p>唐绪盯着屏幕看了很久，久到图书馆的灯开了。他知道这种错有多常见：打印机的日历没设对、扫描的时候被人手动改过、物业的表格本来就是拿上个月的复制过来改的。这些解释都成立，他甚至可以给每一个错位都找到一句“正常原因”。</p>
+            <p>但这三张单子不是同一个原因。</p>
+            <p>他把三张的截图并排放在一起。第一张的日期栏是“8月15日”，编号推算出的应该是 8月14日；第二张写“8月18日”，应该是 8月17日；第三张最奇怪——公示日期是 8月22日，编号推出来应该是 8月21日；而 8月21日，是唐禾出门的那天。</p>
+            <p>不是“多了一天”。</p>
+            <p>是这栋楼的记录里，从八月十四号起就出错了：他把最早的那张错单往回推，推出来的是八月十四号，而八月十四号，是这串编号里唯一对不上任何一张纸的一天。后面每一张的日期都顶在前一天的位置上，一张挤一张，所以那张按照编号应该属于八月二十一号的单子，日期栏里写的是八月二十二号。</p>
+            <p>唐绪坐在那儿，把这句话在心里念了两遍，然后笑了一下，是那种自己都觉得荒唐的笑。他想的不是鬼，不是阴谋。他想的是：一张表里的日期整体挪了一天，只有两种情况——要么是填表的人从那天起就一直算错，要么是这栋楼里有一件事，被人从表格里拿掉了。</p>
+            <p>拿掉一件事以后，后面的日期就会像被人推了一把，全部往前挤一格。而挤过之后，原本占着那一格的那一天，就空出来了。</p>
+            <p>他不信鬼。他信核对。</p>
+            <p>他把三张截图存进那个“老楼_平面图_待补”的文件夹，重命名为“喻家巷十七号_日期”，然后打开地图，搜了这个地址。</p>
+            <p>定位点跳出来的时候，他愣了一下。</p>
+            <p>喻家巷十七号，离区文化馆步行十一分钟。</p>
+            <p>他没跟任何人说。他妈要是知道他又往这件事上钻，会让他别乱跑。他也不打算去问警察，警察有一百件事要查，他手里只有三张看不清的扫描件，说出来只会被当成一个想不开的家属。</p>
+            <p>他做了另一件事：找出物业的电话，打过去，说要查一栋楼的维保记录。</p>
+            <p>接电话的人很不耐烦，问他哪个单位的。他说是学校做课题，查公开档案。</p>
+            <p>“那个得走流程，你到现场来看吧，我们台账在办公室。”</p>
+            <p>唐绪说好。</p>
+            <p>他挂了电话，看了一眼时间，五点四十。他妈的排骨差不多炖好了。他收拾东西下楼，走到一半又停住，拐进一楼的打印室，把三张截图打印出来。</p>
+            <p>A4 纸从机器里出来的时候，他看见其中一张的日期栏里，“22”这两个数字印得比旁边的字轻一点，像叠印了一次。</p>
+            <div class="scene-break" aria-hidden="true"><span>◆◆◆</span></div>
+            <p>那天晚上他回家，吃了一大碗饭。她妈问他在学校干什么，他说抄资料。他妈问他要不要带点排骨回去，他说带。</p>
+            <p>打包的时候，他妈突然说：“你要去看那栋楼，我跟你一起去。”</p>
+            <p>唐绪没抬头：“我没说要去。”</p>
+            <p>“你从小就这样，想干什么的时候不吃饭。”她妈把饭盒盖好，扣上，“你妹妹也是这样。”</p>
+            <p>他没接话。</p>
+            <p>回去的路上他骑电动车，路过了文化馆。声档室在三楼，窗子黑着。他在楼下停了十几秒，然后掏出手机，又听了一遍那条四十七秒的语音。</p>
+            <p>前面的都熟。唐禾的声音很快，也不客气；中间停顿很长。</p>
+            <p>到“哥，你听我说一件事”这里，她断了。断了之后有三下很轻的敲击声，隔了两拍，又有一声长的。接着是那阵风。</p>
+            <p>他又听了一遍。</p>
+            <p>再一遍。</p>
+            <p>第三遍的时候，他确认了一件他从没确认过的事：那阵风不是背景。它是在敲击声之后开始的，而且它只响了一次，接着录音就没了。</p>
+            <p>他把车停在路边，打开手机备忘录，敲了三行字：</p>
+            <blockquote>
+              <p>1. 三短一长：像敲门，也像信号。<br>2. 风：管子。她说“管子里的风”。<br>3. 语音断在 47 秒，不是没话说了，是被切了。</p>
+            </blockquote>
+            <p>写完他抬头看路口。绿灯亮过一轮，又亮了一轮。</p>
+            <p>他把手机放回兜里，掉转车头，往喻家巷的方向骑。</p>
+            <p>明天上午九点，他有一个物业办公室要进。台账在人家手里，日期印在纸上。他要看那张原件。</p>
+            <p>如果那张原件上写着“8月22日”，而右下角的登记笔迹和编号又都对得上——那这件事就不是打印故障。</p>
+
+          </div>
+
+        </section>
+
+        <section class="chapter" data-title="第二章　台账在谁手里">
+
+          <div class="prose">
+
+            <p>第二天早上八点五十，唐绪把电动车停在喻家巷十七号门口的消防通道边上。</p>
+            <p>他昨晚没睡好。不是害怕，是那种事情没理完就睡不着的难受——脑子里翻来覆去都是三个数字：8月14、8月21、8月22。他在床上把这三张单子在心里排了十几遍，排到最后自己都觉得荒唐：一栋楼的维修记录，跟他妹妹有什么关系。可他就是睡不着。</p>
+            <p>喻家巷十七号比他想的旧。外墙贴着米色的小方块瓷砖，有一半已经发灰，空调外机一层一层挂到十二楼，楼下的单位招牌换了三四轮，最新的一块是打印纸过塑的，贴在玻璃门上。门口停着七八辆电动车，车筐里塞着外卖箱。</p>
+            <p>物业办公室在一层楼道口右手边，一间用玻璃隔出来的小屋，门开着。里面坐着一个二十七八岁的男的，正在吃早饭，桌上摊着一份豆浆、半张饼，电脑屏幕亮着，正在放一个游戏界面。</p>
+            <p>“你好，我昨天打过电话。”唐绪说。</p>
+            <p>那人把饼放下，用手背擦了下嘴。“查维保记录的？学校那个？”</p>
+            <p>“对，姓唐。”</p>
+            <p>“程。你叫我小程就行。”他抽了张纸巾擦手，“带证件了吗？”</p>
+            <p>唐绪把学生证递过去。小程翻了一下，又看了一眼他，像在确认什么。他把学生证放在桌上，转身去柜子里翻东西。</p>
+            <p>“你要查哪一段？”</p>
+            <p>“八月十四号到八月二十一号。”</p>
+            <p>小程回头看了他一眼：“挺精确啊。”</p>
+            <p>“我网上看到几张公示单，日期对不上。”</p>
+            <p>小程“哦”了一声，从柜子里抽出一本蓝色的硬壳台账，放在桌上。本子很旧，边角磨白，书脊上贴着一张标签，写着“逐月·2026”。他翻到八月，把本子推过来。</p>
+            <p>“纸质台账就这一本，你要看电脑的话我也能给你调。”</p>
+            <p>唐绪先看纸。</p>
+            <p>八月的记录不多，一页多。每一行有日期、报修内容、处理人、验收签字。字迹换过几个人，其中一个人的字特别小，写得很挤。电梯那一栏他看得最慢。</p>
+            <p><strong>8月6日　1号楼电梯日常保养（半月）　维保单位：宏泰　验收：程</strong></p>
+            <p><strong>8月22日　1号楼电梯日常保养（半月）　维保单位：宏泰　验收：程</strong></p>
+            <p>就这两条。</p>
+            <p>唐绪盯着这两行看了很久。他把笔记本掏出来，翻到昨晚写的那页，又打开手机看那三张截图。8月6号和8月22号，相隔十六天。</p>
+            <p>电梯半月保养是十五天一次。这是他在城建档案网站上翻公示单时顺手记住的，因为那家维保单位的单子上明明白白印着“半月保养”。六号往后十五天，是二十一号。</p>
+            <p>不是二十二号。</p>
+            <p>“你们电梯是十五天一次？”他问。</p>
+            <p>“规定就是半个月。”小程把饼吃完，揉了揉纸袋，“有时候早一天晚一天，赶上周六周日会挪。”</p>
+            <p>“八月二十二号是周几？”</p>
+            <p>小程愣了一下，掏出手机翻日历。“周六。”</p>
+            <p>“那二十号呢？”</p>
+            <p>“周四。”</p>
+            <p>“六号呢？”</p>
+            <p>“周四。”</p>
+            <p>“六号周四，往后十五天还是周四，二十号也是周四，二十二号是周六——那你这个半月保养是哪来的？”</p>
+            <p>小程看着他，没马上接话。过了一会儿他把手机放下，说：“哥们，我八月二十五号才来的，上一任八月底走的，没交接。这楼的事我是边做边学。”他指了指台账上二十二号那行，“这行签字是我，后面几条也是我。”</p>
+            <p>这话唐绪信。台账上的字迹确实换过，八月前面有几行的字跟后面的不一样。</p>
+            <p>“那你有没有八月的原始单子？”唐绪问，“维保单位会给你们留一张，你们签完字要留底。”</p>
+            <p>小程挠了挠头：“留底是有。上个月有一批台账和原始单子送去区里了，说是要统一归档、做数字化。具体什么时候回来不知道。”</p>
+            <p>又是“送去区里了”。</p>
+            <p>唐绪把这个词在嘴里含了一下。他昨天在文化馆听到的也是同一句——唐禾的笔记本上写着 A-37，系统里查不到，那人说“上个礼拜有一批东西送去市里做数字化了”。</p>
+            <p>同一种说法，两个地方，隔了两站地。</p>
+            <p>“那电脑里呢？”他问。</p>
+            <p>“电脑里是这个月的。”小程把椅子挪开，让出屏幕，“八月在纸质本上，这个是十月才录进去的，上一任拖了。”</p>
+            <p>唐绪弯下腰看屏幕。表格拉得很长，从楼顶到地下室，各类报修。他一行一行往下划，划到八月那一段的时候，停住了。</p>
+            <p>八月十四号到八月二十一号，物业共记录十一次报修：水管、走廊灯、单元门门磁、几户的窗户渗水。</p>
+            <p>他数了两遍。</p>
+            <p>台账上有八月十四号，有八月十五、十六、十七、十八、十九、二十，然后直接跳到二十二。</p>
+            <p><strong>没有八月二十一号这一行。</strong></p>
+            <p>不是日期写错了，是这一天的记录整个不在。</p>
+            <p>他又翻回纸质本，把八月的页面从头看到尾。纸质本上也没有二十一号——但纸质本上写着二十二号那两条电梯保养之外，还有一条“一号楼三单元门磁失灵”。</p>
+            <p>“这一天，怎么没有？”唐绪指着纸质本上二十号和二十二号之间。</p>
+            <p>小程凑过来看了一会儿。他伸手在本子上摸了摸，像在确认纸有没有连页。“我也说不上来。可能那天没人报修。”</p>
+            <p>“二十号有，二十二号有三条，中间空一天？”</p>
+            <p>“有时候就是没人报。”小程说得很自然，顿了顿又补一句，“而且这个本子是上一任记的，你看这个字，跟后面不一样，他八月底就走了。”</p>
+            <p>“他叫什么？”</p>
+            <p>小程看了他一眼，那种眼神是在衡量要不要说。“姓周。周建明好像。”他停了一下，“他手机我这儿没留，他走的时候把抽屉自己的东西都收干净了。”</p>
+            <p>唐绪把名字记在本子上。周—建—明。</p>
+            <p>他重新翻回八月那一页，用左手把书页掀起来，让纸面斜对着窗户。这一下他看见了一个东西：二十号和二十二号之间那道页缝上，有一条很浅的压痕，从装订线那边斜着划过来，短，不直，像有人用指甲压过，或者在这两页之间夹过什么。他从正面看、从侧面看，来回两次，才确认它不是折痕——折痕会整条板起来，这一条只在光下有一点影子。</p>
+            <p>他把台账推回去的时候，顺手把页边捋平了。</p>
+            <p>他又问了一句：“八月二十一号那天，楼里有没有出过事？”</p>
+            <p>问完这句话，他自己先愣了一秒。</p>
+            <p>不是因为他觉得问错了，是因为——这句话他今天是第二遍问。头一遍是在文化馆隔壁办公室，他问“那盘 A-37 还在吗”之前，顺口问过那人一句“她那天有没有不对劲”。第二遍是在派出所，他问他妈“警察有没有说现场怎么样”。</p>
+            <p>三遍都是同一句话。他从来没有问过“她在哪儿”，他问的都是“那天发生了什么”“记录怎么写的”“有没有事”。</p>
+            <p>他在心里把这个念头按下去，没让它继续跑。</p>
+            <p>小程的回答是：“没听说。”</p>
+            <p>“没听说”这三个字很轻。唐绪看着他，看见小程舔了下嘴唇，手指在桌子上敲了两下，然后拿起豆浆喝了一口，把杯子放下的时候声音比刚才大。</p>
+            <p>“你查这个干什么？”小程问，“不是做课题吗？”</p>
+            <p>“是。”</p>
+            <p>“那你这课题挺细。”</p>
+            <p>唐绪没解释。他把台账上八月的两页拍了下来，又拍了电脑屏幕上的表格，问了句：“能不能给我一张打印的？”</p>
+            <p>小程想了想，从抽屉里抽出一张空白的报修单——印着他们物业抬头的A4纸，上下两条黑线——然后在上面用圆珠笔写了个电话，推给他。</p>
+            <p>“我们公司的电话。要盖章的东西你走流程找客服，我这没章。”他说，“别的我也不敢多给。”</p>
+            <p>唐绪把纸叠好放进书包。</p>
+            <p>“程师傅，”他临走前又停住，“上一任是八月几号走的？”</p>
+            <p>“月底吧。”小程想了想，“我八月二十五号来的时候，他还在收拾抽屉，隔了两天就不来了。”</p>
+            <p>“他为什么走？”</p>
+            <p>“不知道。听说是家里有事。”小程低头看自己的手机，游戏界面还亮着，“这行就这样，来一个走一个。”</p>
+            <p>唐绪没再问。他把手机拿出来，对着台账八月的两页又拍了一遍，这回他把镜头压低，斜着拍，让页面侧过来。有一处对不上：<strong>二十号和二十二号之间，纸面上有一道很浅的压痕</strong>，从装订线那侧划过来，短，不直，像有人拿指甲压过，或者把什么东西在这两页之间夹过。他昨天在图书馆看扫描件的时候看不到这个——扫描件是平的。</p>
+            <p>他把这段也拍了。</p>
+            <div class="scene-break" aria-hidden="true"><span>◆◆◆</span></div>
+            <p>出楼道口的时候他打了个电话。</p>
+            <p>维保单位的电话是他昨天从公示单上抄下来的，接电话的是个女的，声音很忙，背景里有人在喊单子。</p>
+            <p>“查电梯保养记录是吧？哪个小区？”</p>
+            <p>“喻家巷十七号。”</p>
+            <p>键盘敲了几下。“一号楼，曳引式，年检到明年三月。保养是半月的，我们表上是双周。”</p>
+            <p>“八月六号之后，下一次是哪天？”</p>
+            <p>又敲了几下。“八月二十一号。”</p>
+            <p>唐绪在台阶上站住了。</p>
+            <p>“你确定？”</p>
+            <p>“我确定。”那边有点不耐烦，“六号是周四，往后两个礼拜就是二十一号。怎么，你们那边没记录？”</p>
+            <p>“……有记录，写的是二十二号。”</p>
+            <p>“那你们物业自己的单子写错了吧。”她顿了一下，“我们这边二十一号是有工单的，师傅去了，你们那楼签收的是——”</p>
+            <p>“姓什么？”</p>
+            <p>“等一下。”键盘又响了几声，“签的就是物业那边的验收人，我看不到具体名字，我们签字在纸质上。你要准的得看我们师傅存的底单。”</p>
+            <p>“底单在哪？”</p>
+            <p>“在师傅车上。他跑的楼多，一个月一交，交了归仓。”她像是在算日子，“八月的那批早就交了。”</p>
+            <p>唐绪问了仓库在哪，对方报了个地址，在城西，说“你去了也没用，个人查不了”。他谢了一声，挂了电话。</p>
+            <p>他站在喻家巷十七号门口，看着那台正在下的电梯。</p>
+            <p>楼里的电梯厅用一堵墙和外面的小卖部隔开，墙上贴着一张行号牌，从上到下写着十二个数字，边上钉着一块褪色的“乘梯须知”。电梯门开了，出来两个人，一男一女，拎着菜，从他身边走过去，没看他。</p>
+            <p>电梯门合上，往上走。</p>
+            <p>唐绪抬头看那串数字。数字是塑料贴在铁板上的，边角翘起来一点，十二上面没了。</p>
+            <p>他忽然想起来昨天晚上在城建档案网站上看到的东西——那栋楼的图纸，一层到十二层的平面图，电梯井的位置在图纸上是偏东的，井道从地下室一直通到屋顶的机房。他看图纸的时候注意到一件事，当时没在意：电梯井的竖向剖面里，八层和九层之间的那段标高，比别的楼层都短。</p>
+            <p>短了一截。</p>
+            <p>他当时以为是图上的尺寸标注省了，或者是老图纸画得不仔细。现在他站在楼下看着那串数字往上走，那个“短了一截”的念头又回来，跟台账上那道压痕排在一起。</p>
+            <p>电梯停在六楼。</p>
+            <p>唐绪把手机收起来，走进小卖部买了一瓶水。他用微信付的钱，付完顺手看了一眼余额，又看了一眼通讯录——唐禾的对话框还在第四个位置。</p>
+            <p>他没点开。他给小程发了条短信，问那个姓周的上一任还留着什么联系方式。</p>
+            <p>对方回得很快：<strong>真没有，他走的时候把工牌都交了。</strong></p>
+            <p>唐绪把这条短信截图，存进那个叫“喻家巷十七号_日期”的文件夹。然后他拧开水喝了一口，给妈打电话。</p>
+            <p>“妈。”</p>
+            <p>“哎。”</p>
+            <p>“昨天说的那栋楼，我今天来看过了。”</p>
+            <p>电话那头安静了两秒。“你去了。”</p>
+            <p>“去了。”</p>
+            <p>“查出什么了？”</p>
+            <p>“没什么。”他说，“就是记录对不上。”</p>
+            <p>“……记录对不上。”她妈把这句话重复了一遍，声音比刚才低，“你妹妹也是记录对不上。人不见了，记录查不到，监控查不到，手机也不动。”</p>
+            <p>“妈。”</p>
+            <p>“你别学我。”她妈说，“我天天去派出所没用。”</p>
+            <p>“我下午回学校。”</p>
+            <p>“嗯。”她妈没挂，过了几秒才说，“晚上回来吃饭吗？”</p>
+            <p>“回。”</p>
+            <p>挂了电话，唐绪在楼下又站了一会儿。他抬头看那栋楼，阳光照在瓷砖上，一层灰。</p>
+            <p>走廊里那部电梯已经下到一层了。</p>
+
+          </div>
+
+        </section>
+      </article>
+
+      <nav class="chapter-nav" id="chapterNav" aria-label="章节翻页">
+        <button class="nav-button prev" id="prevButton" type="button" disabled>
+          <span class="nav-caption">上一章</span>
+          <span class="nav-label" id="prevLabel">已经是第一章</span>
+        </button>
+        <button class="nav-button next" id="nextButton" type="button">
+          <span class="nav-caption">下一章</span>
+          <span class="nav-label" id="nextLabel">下一章</span>
+        </button>
+      </nav>
+    </main>
+  </div>
+
+  <button class="to-top" id="toTop" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const chapters = [...document.querySelectorAll('.chapter')];
+      const chapterButtons = [...document.querySelectorAll('.chapter-button')];
+      if (!chapters.length) return;
+
+      const title = document.getElementById('chapterTitle');
+      const prev = document.getElementById('prevButton');
+      const next = document.getElementById('nextButton');
+      const prevLabel = document.getElementById('prevLabel');
+      const nextLabel = document.getElementById('nextLabel');
+      const themeButton = document.getElementById('themeButton');
+      const settingsButton = document.getElementById('settingsButton');
+      const readerSettings = document.getElementById('readerSettings');
+      const fontSelect = document.getElementById('fontSelect');
+      const lineHeightRange = document.getElementById('lineHeightRange');
+      const paragraphGapRange = document.getElementById('paragraphGapRange');
+      const lineHeightValue = document.getElementById('lineHeightValue');
+      const paragraphGapValue = document.getElementById('paragraphGapValue');
+      const progressBar = document.getElementById('progressBar');
+      const menuButton = document.getElementById('menuButton');
+      const scrim = document.getElementById('scrim');
+      const toTop = document.getElementById('toTop');
+      const chapterNav = document.getElementById('chapterNav');
+      const list = document.getElementById('chapterList');
+
+      const BOOK = document.title;
+      const KEY = 'here-still-people';
+      const minSize = 15;
+      const maxSize = 27;
+      const fontStacks = {
+        songti: '"Songti SC", STSong, "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif',
+        kaiti: '"Kaiti SC", STKaiti, KaiTi, "TW-Kai", serif',
+        fangsong: 'FangSong, STFangsong, "FangSong GB2312", "Noto Serif CJK SC", serif',
+        heiti: '-apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", sans-serif'
+      };
+
+      function readNumber(key, fallback) {
+        const value = Number(localStorage.getItem(key));
+        return Number.isFinite(value) ? value : fallback;
+      }
+
+      let current = Math.trunc(readNumber(KEY + '-chapter', 0));
+      let size = readNumber(KEY + '-font-size', 19);
+      let font = localStorage.getItem(KEY + '-font') || 'songti';
+      let lineHeight = readNumber(KEY + '-line-height', 1.95);
+      let paragraphGap = readNumber(KEY + '-paragraph-gap', 1.25);
+      let scrollMax = 0;
+      let progressFrame = 0;
+      let activeIndex = current;
+
+      let scrollMap = {};
+      try { scrollMap = JSON.parse(localStorage.getItem(KEY + '-scroll') || '{}') || {}; } catch (error) { scrollMap = {}; }
+
+      if (!Number.isInteger(current) || current < 0 || current >= chapters.length) current = 0;
+      if (size < minSize || size > maxSize) size = 19;
+      if (!fontStacks[font]) font = 'songti';
+      if (lineHeight < 1.4 || lineHeight > 2.6) lineHeight = 1.95;
+      if (paragraphGap < 0.2 || paragraphGap > 2.4) paragraphGap = 1.25;
+
+      const storedTheme = localStorage.getItem(KEY + '-theme');
+      if (storedTheme === 'night') root.dataset.theme = 'night';
+      root.style.setProperty('--reading-size', size + 'px');
+      root.style.setProperty('--reading-font', fontStacks[font]);
+      root.style.setProperty('--reading-leading', String(lineHeight));
+      root.style.setProperty('--paragraph-gap', paragraphGap + 'em');
+      fontSelect.value = font;
+      lineHeightRange.value = String(lineHeight);
+      paragraphGapRange.value = String(paragraphGap);
+      lineHeightValue.textContent = lineHeight.toFixed(2).replace(/0$/, '');
+      paragraphGapValue.textContent = paragraphGap.toFixed(2).replace(/0$/, '');
+      themeButton.setAttribute('aria-label', storedTheme === 'night' ? '切换日间模式' : '切换夜间模式');
+
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+      function closeSettings() {
+        readerSettings.classList.remove('open');
+        settingsButton.setAttribute('aria-expanded', 'false');
+      }
+      function paintProgress() {
+        progressFrame = 0;
+        const amount = scrollMax > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollMax)) : 0;
+        progressBar.style.transform = 'scaleX(' + amount + ')';
+        toTop.classList.toggle('show', window.scrollY > 700);
+      }
+      function requestProgressUpdate() {
+        if (!progressFrame) progressFrame = window.requestAnimationFrame(paintProgress);
+      }
+      function refreshScrollMetrics() {
+        scrollMax = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        requestProgressUpdate();
+      }
+      function saveScroll() {
+        if (scrollMax <= 0) return;
+        scrollMap[String(activeIndex)] = Math.round(Math.min(1, Math.max(0, window.scrollY / scrollMax)) * 1000) / 1000;
+        try { localStorage.setItem(KEY + '-scroll', JSON.stringify(scrollMap)); } catch (error) { /* 存储不可用时忽略 */ }
+      }
+      function restoreScroll() {
+        const ratio = Number(scrollMap[String(activeIndex)]);
+        const top = Number.isFinite(ratio) && ratio > 0.01 ? ratio * scrollMax : 0;
+        window.scrollTo({ top, behavior: 'auto' });
+        refreshScrollMetrics();
+      }
+
+      function showChapter(index, options) {
+        const opts = options || {};
+        if (opts.keepScroll !== true) saveScroll();
+        current = Math.max(0, Math.min(chapters.length - 1, index));
+        activeIndex = current;
+        document.body.classList.remove('menu-open');
+        chapters.forEach((chapter, i) => chapter.classList.toggle('active', i === current));
+        chapterButtons.forEach((button, i) => button.setAttribute('aria-current', i === current ? 'true' : 'false'));
+        title.textContent = chapters[current].dataset.title;
+        document.title = chapters[current].dataset.title + ' — ' + BOOK;
+        prev.disabled = current === 0;
+        next.disabled = current === chapters.length - 1;
+        prevLabel.textContent = current > 0 ? chapters[current - 1].dataset.title : '已经是第一章';
+        nextLabel.textContent = current < chapters.length - 1 ? chapters[current + 1].dataset.title : '未完待续';
+        chapterNav.hidden = false;
+        localStorage.setItem(KEY + '-chapter', String(current));
+        closeMenu();
+        closeSettings();
+        if (window.location.hash !== '#' + (current + 1)) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search + '#' + (current + 1));
+        }
+        window.requestAnimationFrame(() => {
+          refreshScrollMetrics();
+          if (opts.restore === true) restoreScroll();
+          else if (opts.keepScroll !== true) window.scrollTo({ top: 0, behavior: 'auto' });
+        });
+      }
+
+      chapterButtons.forEach((button) => button.addEventListener('click', () => showChapter(Number(button.dataset.go), { restore: true })));
+      prev.addEventListener('click', () => showChapter(current - 1));
+      next.addEventListener('click', () => showChapter(current + 1));
+      menuButton.addEventListener('click', () => {
+        const open = document.body.classList.toggle('menu-open');
+        menuButton.setAttribute('aria-expanded', String(open));
+      });
+      scrim.addEventListener('click', closeMenu);
+      toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      settingsButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = readerSettings.classList.toggle('open');
+        settingsButton.setAttribute('aria-expanded', String(open));
+      });
+      readerSettings.addEventListener('click', (event) => event.stopPropagation());
+      document.addEventListener('click', closeSettings);
+
+      document.getElementById('smallerText').addEventListener('click', () => {
+        size = Math.max(minSize, size - 1);
+        root.style.setProperty('--reading-size', size + 'px');
+        localStorage.setItem(KEY + '-font-size', String(size));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      document.getElementById('largerText').addEventListener('click', () => {
+        size = Math.min(maxSize, size + 1);
+        root.style.setProperty('--reading-size', size + 'px');
+        localStorage.setItem(KEY + '-font-size', String(size));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      themeButton.addEventListener('click', () => {
+        const night = root.dataset.theme !== 'night';
+        if (night) root.dataset.theme = 'night';
+        else delete root.dataset.theme;
+        localStorage.setItem(KEY + '-theme', night ? 'night' : 'day');
+        themeButton.setAttribute('aria-label', night ? '切换日间模式' : '切换夜间模式');
+      });
+      fontSelect.addEventListener('change', () => {
+        font = fontStacks[fontSelect.value] ? fontSelect.value : 'songti';
+        root.style.setProperty('--reading-font', fontStacks[font]);
+        localStorage.setItem(KEY + '-font', font);
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      lineHeightRange.addEventListener('input', () => {
+        lineHeight = Number(lineHeightRange.value);
+        root.style.setProperty('--reading-leading', String(lineHeight));
+        lineHeightValue.textContent = lineHeight.toFixed(2).replace(/0$/, '');
+        localStorage.setItem(KEY + '-line-height', String(lineHeight));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      paragraphGapRange.addEventListener('input', () => {
+        paragraphGap = Number(paragraphGapRange.value);
+        root.style.setProperty('--paragraph-gap', paragraphGap + 'em');
+        paragraphGapValue.textContent = paragraphGap.toFixed(2).replace(/0$/, '');
+        localStorage.setItem(KEY + '-paragraph-gap', String(paragraphGap));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      document.getElementById('resetTypography').addEventListener('click', () => {
+        size = 19;
+        font = 'songti';
+        lineHeight = 1.95;
+        paragraphGap = 1.25;
+        fontSelect.value = font;
+        lineHeightRange.value = String(lineHeight);
+        paragraphGapRange.value = String(paragraphGap);
+        lineHeightValue.textContent = '1.95';
+        paragraphGapValue.textContent = '1.25';
+        root.style.setProperty('--reading-size', size + 'px');
+        root.style.setProperty('--reading-font', fontStacks[font]);
+        root.style.setProperty('--reading-leading', String(lineHeight));
+        root.style.setProperty('--paragraph-gap', paragraphGap + 'em');
+        localStorage.setItem(KEY + '-font-size', String(size));
+        localStorage.setItem(KEY + '-font', font);
+        localStorage.setItem(KEY + '-line-height', String(lineHeight));
+        localStorage.setItem(KEY + '-paragraph-gap', String(paragraphGap));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return;
+        if (event.key === 'ArrowLeft') showChapter(current - 1);
+        else if (event.key === 'ArrowRight') showChapter(current + 1);
+        else if (event.key === 'Escape') { closeMenu(); closeSettings(); }
+      });
+
+      let scrollTicking = false;
+      window.addEventListener('scroll', () => {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        window.requestAnimationFrame(() => { scrollTicking = false; paintProgress(); });
+      }, { passive: true });
+      window.addEventListener('resize', () => window.requestAnimationFrame(refreshScrollMetrics));
+      window.addEventListener('beforeunload', saveScroll);
+
+      // 深链接：#3 直接打开第三章
+      const hash = Number((window.location.hash || '').replace('#', ''));
+      const initial = Number.isInteger(hash) && hash >= 1 && hash <= chapters.length ? hash - 1 : current;
+      const started = initial !== 0;
+      chapters.forEach((chapter, i) => chapter.classList.toggle('active', i === 0));
+      chapterButtons.forEach((button, i) => button.setAttribute('aria-current', i === 0 ? 'true' : 'false'));
+      showChapter(initial, { keepScroll: true, restore: started });
+      if (list && chapterButtons[current]) chapterButtons[current].scrollIntoView({ block: 'nearest' });
+    })();
+  </script>
+</body>
+</html>

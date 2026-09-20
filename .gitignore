@@ -1,0 +1,14 @@
+# 内部资料：只在本机保留，永不进入公开仓库（含剧透或结构内幕）
+# 前两条锚定仓库根目录，避免误伤 .github/README.md 这类面向读者的说明。
+作者资料/
+写作记录/
+/AGENTS.md
+/README.md
+
+# 本地预览与临时产物
+.preview/
+.DS_Store
+__pycache__/
+*.pyc
+.env
+.env.*

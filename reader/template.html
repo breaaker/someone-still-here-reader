@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="{{DESCRIPTION}}">
+  <meta name="theme-color" content="#e7e6e1">
+  <meta name="color-scheme" content="light dark">
+  <title>{{BOOK_TITLE}}</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23232b30'/%3E%3Cpath d='M20 15h22a3 3 0 0 1 3 3v28l-14-7-14 7V18a3 3 0 0 1 3-3Z' fill='%23c98070'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #e7e6e1;
+      --paper-deep: #dbdad3;
+      --surface: rgba(244, 243, 238, 0.82);
+      --surface-solid: #f2f1ec;
+      --ink: #23282c;
+      --muted: #6b7278;
+      --line: rgba(35, 40, 44, 0.14);
+      --accent: #8a3f36;
+      --accent-soft: rgba(138, 63, 54, 0.10);
+      --slate: #2b3339;
+      --brass: #a8884f;
+      --shadow: 0 16px 48px rgba(32, 38, 42, 0.10);
+      --reading-size: 19px;
+      --reading-leading: 1.95;
+      --paragraph-gap: 1.25em;
+      --reading-font: "Songti SC", STSong, "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif;
+    }
+
+    [data-theme="night"] {
+      color-scheme: dark;
+      --paper: #12171a;
+      --paper-deep: #0c1113;
+      --surface: rgba(27, 34, 38, 0.86);
+      --surface-solid: #1b2226;
+      --ink: #d3d8d7;
+      --muted: #8e999b;
+      --line: rgba(211, 216, 215, 0.13);
+      --accent: #c98070;
+      --accent-soft: rgba(201, 128, 112, 0.12);
+      --slate: #0e1316;
+      --brass: #c2a86b;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 84% 6%, rgba(168, 136, 79, 0.10), transparent 30rem),
+        radial-gradient(circle at 8% 92%, rgba(138, 63, 54, 0.06), transparent 26rem),
+        linear-gradient(160deg, var(--paper-deep), var(--paper) 45%, var(--paper-deep));
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      transition: background .25s ease, color .25s ease;
+      overflow-wrap: break-word;
+    }
+
+    button { font: inherit; color: inherit; }
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .progress {
+      position: fixed;
+      z-index: 60;
+      inset: 0 0 auto;
+      height: 3px;
+      background: transparent;
+      pointer-events: none;
+    }
+    .progress > span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--brass));
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    /* ---------- sidebar ---------- */
+    .sidebar {
+      position: fixed;
+      z-index: 40;
+      inset: 0 auto 0 0;
+      width: 286px;
+      display: flex;
+      flex-direction: column;
+      padding: 26px 18px 18px;
+      background: var(--surface-solid);
+      border-right: 1px solid var(--line);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 2px 6px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(150deg, var(--slate), var(--accent));
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+    }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 11px 12px;
+      border: 2px solid rgba(255, 255, 255, .74);
+      border-radius: 2px 2px 6px 6px;
+      border-top-width: 5px;
+    }
+    .brand-kicker {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .brand-title {
+      font-family: var(--reading-font);
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      margin-top: 3px;
+    }
+    .sidebar-label {
+      margin: 18px 6px 10px;
+      font-size: 11px;
+      letter-spacing: .2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .chapter-list {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 4px;
+      flex: 1 1 auto;
+    }
+    .chapter-list li { margin: 0 0 2px; }
+    .volume-label {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin: 14px 6px 6px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      font-size: 11.5px;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .chapter-list li:first-child .volume-label { margin-top: 0; padding-top: 0; border-top: 0; }
+    .volume-label b { color: var(--accent); font-weight: 600; }
+    .chapter-button {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 10px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      line-height: 1.45;
+      transition: background .16s ease, color .16s ease;
+    }
+    .chapter-button:hover { background: var(--accent-soft); }
+    .chapter-button[aria-current="true"] {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    .chapter-number {
+      flex: 0 0 auto;
+      font-size: 12px;
+      color: var(--muted);
+      padding-top: 2px;
+    }
+    .chapter-button[aria-current="true"] .chapter-number { color: var(--accent); }
+    .chapter-name { font-size: 14.5px; }
+    .sidebar-foot {
+      margin-top: 14px;
+      padding: 12px 6px 0;
+      border-top: 1px solid var(--line);
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ---------- main ---------- */
+    .main {
+      grid-column: 2;
+      padding: 84px 26px calc(52px + env(safe-area-inset-bottom));
+      min-width: 0;
+    }
+
+    .toolbar-wrap {
+      position: fixed;
+      z-index: 30;
+      top: calc(14px + env(safe-area-inset-top));
+      right: 22px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .toolbar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .tool-button {
+      display: inline-grid;
+      place-items: center;
+      min-width: 38px;
+      height: 36px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--ink);
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: background .16s ease;
+    }
+    .tool-button:hover { background: var(--accent-soft); }
+    .tool-button svg { width: 19px; height: 19px; }
+    .menu-button { display: none; }
+    .tool-divider { width: 1px; height: 20px; background: var(--line); margin: 0 3px; }
+
+    .reader-settings {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 268px;
+      padding: 16px 16px 6px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface-solid);
+      box-shadow: var(--shadow);
+      display: none;
+    }
+    .reader-settings.open { display: block; }
+    .settings-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13.5px;
+    }
+    .reset-button {
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+    .setting-row { padding: 9px 0 12px; }
+    .setting-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .setting-value { color: var(--accent); font-variant-numeric: tabular-nums; }
+    .font-select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .setting-range {
+      width: 100%;
+      height: 22px;
+      margin: 0;
+      accent-color: var(--accent);
+      background: transparent;
+    }
+
+    .reading-card {
+      max-width: 748px;
+      margin: 0 auto;
+      padding: 46px 54px 52px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .book-title {
+      margin: 0;
+      text-align: center;
+      font-size: 11.5px;
+      letter-spacing: .34em;
+      color: var(--muted);
+      text-indent: .34em;
+    }
+    .chapter-title {
+      margin: 14px 0 0;
+      text-align: center;
+      font-family: var(--reading-font);
+      font-size: calc(var(--reading-size) * 1.42);
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: .02em;
+    }
+    .chapter-ornament {
+      display: flex;
+      justify-content: center;
+      margin: 16px 0 30px;
+      color: var(--brass);
+    }
+    .chapter-ornament span { font-size: 9px; letter-spacing: .5em; text-indent: .5em; }
+
+    .chapter { display: none; }
+    .chapter.active { display: block; }
+
+    .prose {
+      font-family: var(--reading-font);
+      font-size: var(--reading-size);
+      line-height: var(--reading-leading);
+      letter-spacing: .01em;
+    }
+    .prose p {
+      margin: 0 0 var(--paragraph-gap);
+      text-align: left;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose blockquote {
+      margin: 0 0 var(--paragraph-gap);
+      padding: 12px 16px;
+      border-left: 3px solid var(--brass);
+      border-radius: 0 8px 8px 0;
+      background: var(--accent-soft);
+      color: var(--ink);
+      font-size: calc(var(--reading-size) * .94);
+      line-height: calc(var(--reading-leading) * .95);
+    }
+    .prose blockquote p { margin: 0 0 .5em; }
+    .prose blockquote p:last-child { margin-bottom: 0; }
+    .scene-break {
+      display: flex;
+      justify-content: center;
+      margin: calc(var(--paragraph-gap) * 1.5) 0;
+      color: var(--brass);
+      font-size: 9px;
+      letter-spacing: .7em;
+      text-indent: .7em;
+    }
+
+    .chapter-nav {
+      max-width: 748px;
+      margin: 22px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .nav-button {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      transition: background .16s ease, transform .16s ease;
+    }
+    .nav-button:hover:not(:disabled) { background: var(--surface-solid); transform: translateY(-1px); }
+    .nav-button:disabled { opacity: .45; cursor: default; }
+    .nav-button.next { text-align: right; align-items: flex-end; }
+    .nav-caption { font-size: 11px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+    .nav-label { font-family: var(--reading-font); font-size: 15px; line-height: 1.5; }
+
+    .to-top {
+      position: fixed;
+      z-index: 28;
+      right: 20px;
+      bottom: calc(20px + env(safe-area-inset-bottom));
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .2s ease, transform .2s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .to-top svg { width: 18px; height: 18px; }
+
+    .scrim {
+      position: fixed;
+      z-index: 35;
+      inset: 0;
+      display: none;
+      border: 0;
+      padding: 0;
+      background: rgba(12, 17, 19, .48);
+      opacity: 0;
+      transition: opacity .22s ease;
+    }
+
+    /* ---------- mobile ---------- */
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: minmax(0, 1fr); }
+      .sidebar {
+        width: min(84vw, 330px);
+        transform: translate3d(-102%, 0, 0);
+        transition: transform .26s cubic-bezier(.22, .61, .36, 1);
+        padding-top: calc(22px + env(safe-area-inset-top));
+        box-shadow: 0 0 60px rgba(12, 17, 19, .22);
+      }
+      body.menu-open .sidebar { transform: translate3d(0, 0, 0); }
+      .scrim { display: block; }
+      body.menu-open .scrim { opacity: 1; pointer-events: auto; }
+      .main { grid-column: 1; padding: 78px 12px calc(44px + env(safe-area-inset-bottom)); }
+      .menu-button { display: inline-grid; }
+      .toolbar-wrap {
+        left: 12px;
+        right: 12px;
+        top: calc(10px + env(safe-area-inset-top));
+      }
+      .toolbar { width: 100%; justify-content: space-between; }
+      .reader-settings { right: 0; left: 0; width: auto; }
+      .reading-card {
+        border-radius: 16px;
+        padding: 32px 20px 36px;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: var(--surface-solid);
+      }
+      .chapter-nav { grid-template-columns: 1fr; }
+      .nav-button.next { text-align: left; align-items: flex-start; }
+      .prose { letter-spacing: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @media print {
+      .sidebar, .toolbar-wrap, .chapter-nav, .progress, .to-top, .scrim { display: none !important; }
+      .main { padding: 0; }
+      .reading-card { border: 0; box-shadow: none; padding: 0; max-width: none; }
+      .chapter { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <button class="scrim" id="scrim" type="button" aria-label="关闭章节目录"></button>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="章节目录">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-kicker">Serial Reader</div>
+          <div class="brand-title">{{BOOK_TITLE}}</div>
+        </div>
+      </div>
+
+      <div class="sidebar-label">章节目录</div>
+      <ol class="chapter-list" id="chapterList">
+<!--TOC-->
+      </ol>
+
+      <div class="sidebar-foot">{{TAGLINE}}<br>{{SITE_FOOT}}</div>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar-wrap">
+        <div class="toolbar" role="toolbar" aria-label="阅读设置">
+          <button class="tool-button menu-button" id="menuButton" type="button" aria-label="打开章节目录" aria-expanded="false" aria-controls="sidebar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <button class="tool-button" id="smallerText" type="button" aria-label="缩小字号">A−</button>
+          <button class="tool-button" id="largerText" type="button" aria-label="放大字号">A+</button>
+          <div class="tool-divider" aria-hidden="true"></div>
+          <button class="tool-button" id="settingsButton" type="button" aria-label="打开排版设置" aria-expanded="false" aria-controls="readerSettings">Aa</button>
+          <button class="tool-button" id="themeButton" type="button" aria-label="切换夜间模式">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg>
+          </button>
+          <div class="reader-settings" id="readerSettings" aria-label="排版设置">
+            <div class="settings-heading">
+              <strong>排版设置</strong>
+              <button class="reset-button" id="resetTypography" type="button">恢复默认</button>
+            </div>
+            <div class="setting-row">
+              <label class="setting-label" for="fontSelect"><span>正文字体</span></label>
+              <select class="font-select" id="fontSelect">
+                <option value="songti">宋体 · 沉浸阅读</option>
+                <option value="kaiti">楷体 · 书卷气</option>
+                <option value="fangsong">仿宋 · 典籍感</option>
+                <option value="heiti">黑体 · 清晰简洁</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label class="setting-label" for="lineHeightRange"><span>行间距</span><span class="setting-value" id="lineHeightValue">1.95</span></label>
+              <input class="setting-range" id="lineHeightRange" type="range" min="1.4" max="2.6" step="0.05" value="1.95">
+            </div>
+            <div class="setting-row">
+              <label class="setting-label" for="paragraphGapRange"><span>段间距</span><span class="setting-value" id="paragraphGapValue">1.25</span></label>
+              <input class="setting-range" id="paragraphGapRange" type="range" min="0.2" max="2.4" step="0.05" value="1.25">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <article class="reading-card" id="readingCard">
+        <p class="book-title">{{BOOK_TITLE}}</p>
+        <h1 class="chapter-title" id="chapterTitle">{{FIRST_TITLE}}</h1>
+        <div class="chapter-ornament" aria-hidden="true"><span>◆◆◆</span></div>
+<!--CHAPTERS-->
+      </article>
+
+      <nav class="chapter-nav" id="chapterNav" aria-label="章节翻页">
+        <button class="nav-button prev" id="prevButton" type="button" disabled>
+          <span class="nav-caption">上一章</span>
+          <span class="nav-label" id="prevLabel">已经是第一章</span>
+        </button>
+        <button class="nav-button next" id="nextButton" type="button">
+          <span class="nav-caption">下一章</span>
+          <span class="nav-label" id="nextLabel">下一章</span>
+        </button>
+      </nav>
+    </main>
+  </div>
+
+  <button class="to-top" id="toTop" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const chapters = [...document.querySelectorAll('.chapter')];
+      const chapterButtons = [...document.querySelectorAll('.chapter-button')];
+      if (!chapters.length) return;
+
+      const title = document.getElementById('chapterTitle');
+      const prev = document.getElementById('prevButton');
+      const next = document.getElementById('nextButton');
+      const prevLabel = document.getElementById('prevLabel');
+      const nextLabel = document.getElementById('nextLabel');
+      const themeButton = document.getElementById('themeButton');
+      const settingsButton = document.getElementById('settingsButton');
+      const readerSettings = document.getElementById('readerSettings');
+      const fontSelect = document.getElementById('fontSelect');
+      const lineHeightRange = document.getElementById('lineHeightRange');
+      const paragraphGapRange = document.getElementById('paragraphGapRange');
+      const lineHeightValue = document.getElementById('lineHeightValue');
+      const paragraphGapValue = document.getElementById('paragraphGapValue');
+      const progressBar = document.getElementById('progressBar');
+      const menuButton = document.getElementById('menuButton');
+      const scrim = document.getElementById('scrim');
+      const toTop = document.getElementById('toTop');
+      const chapterNav = document.getElementById('chapterNav');
+      const list = document.getElementById('chapterList');
+
+      const BOOK = document.title;
+      const KEY = 'here-still-people';
+      const minSize = 15;
+      const maxSize = 27;
+      const fontStacks = {
+        songti: '"Songti SC", STSong, "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif',
+        kaiti: '"Kaiti SC", STKaiti, KaiTi, "TW-Kai", serif',
+        fangsong: 'FangSong, STFangsong, "FangSong GB2312", "Noto Serif CJK SC", serif',
+        heiti: '-apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", sans-serif'
+      };
+
+      function readNumber(key, fallback) {
+        const value = Number(localStorage.getItem(key));
+        return Number.isFinite(value) ? value : fallback;
+      }
+
+      let current = Math.trunc(readNumber(KEY + '-chapter', 0));
+      let size = readNumber(KEY + '-font-size', 19);
+      let font = localStorage.getItem(KEY + '-font') || 'songti';
+      let lineHeight = readNumber(KEY + '-line-height', 1.95);
+      let paragraphGap = readNumber(KEY + '-paragraph-gap', 1.25);
+      let scrollMax = 0;
+      let progressFrame = 0;
+      let activeIndex = current;
+
+      let scrollMap = {};
+      try { scrollMap = JSON.parse(localStorage.getItem(KEY + '-scroll') || '{}') || {}; } catch (error) { scrollMap = {}; }
+
+      if (!Number.isInteger(current) || current < 0 || current >= chapters.length) current = 0;
+      if (size < minSize || size > maxSize) size = 19;
+      if (!fontStacks[font]) font = 'songti';
+      if (lineHeight < 1.4 || lineHeight > 2.6) lineHeight = 1.95;
+      if (paragraphGap < 0.2 || paragraphGap > 2.4) paragraphGap = 1.25;
+
+      const storedTheme = localStorage.getItem(KEY + '-theme');
+      if (storedTheme === 'night') root.dataset.theme = 'night';
+      root.style.setProperty('--reading-size', size + 'px');
+      root.style.setProperty('--reading-font', fontStacks[font]);
+      root.style.setProperty('--reading-leading', String(lineHeight));
+      root.style.setProperty('--paragraph-gap', paragraphGap + 'em');
+      fontSelect.value = font;
+      lineHeightRange.value = String(lineHeight);
+      paragraphGapRange.value = String(paragraphGap);
+      lineHeightValue.textContent = lineHeight.toFixed(2).replace(/0$/, '');
+      paragraphGapValue.textContent = paragraphGap.toFixed(2).replace(/0$/, '');
+      themeButton.setAttribute('aria-label', storedTheme === 'night' ? '切换日间模式' : '切换夜间模式');
+
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+      function closeSettings() {
+        readerSettings.classList.remove('open');
+        settingsButton.setAttribute('aria-expanded', 'false');
+      }
+      function paintProgress() {
+        progressFrame = 0;
+        const amount = scrollMax > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollMax)) : 0;
+        progressBar.style.transform = 'scaleX(' + amount + ')';
+        toTop.classList.toggle('show', window.scrollY > 700);
+      }
+      function requestProgressUpdate() {
+        if (!progressFrame) progressFrame = window.requestAnimationFrame(paintProgress);
+      }
+      function refreshScrollMetrics() {
+        scrollMax = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        requestProgressUpdate();
+      }
+      function saveScroll() {
+        if (scrollMax <= 0) return;
+        scrollMap[String(activeIndex)] = Math.round(Math.min(1, Math.max(0, window.scrollY / scrollMax)) * 1000) / 1000;
+        try { localStorage.setItem(KEY + '-scroll', JSON.stringify(scrollMap)); } catch (error) { /* 存储不可用时忽略 */ }
+      }
+      function restoreScroll() {
+        const ratio = Number(scrollMap[String(activeIndex)]);
+        const top = Number.isFinite(ratio) && ratio > 0.01 ? ratio * scrollMax : 0;
+        window.scrollTo({ top, behavior: 'auto' });
+        refreshScrollMetrics();
+      }
+
+      function showChapter(index, options) {
+        const opts = options || {};
+        if (opts.keepScroll !== true) saveScroll();
+        current = Math.max(0, Math.min(chapters.length - 1, index));
+        activeIndex = current;
+        document.body.classList.remove('menu-open');
+        chapters.forEach((chapter, i) => chapter.classList.toggle('active', i === current));
+        chapterButtons.forEach((button, i) => button.setAttribute('aria-current', i === current ? 'true' : 'false'));
+        title.textContent = chapters[current].dataset.title;
+        document.title = chapters[current].dataset.title + ' — ' + BOOK;
+        prev.disabled = current === 0;
+        next.disabled = current === chapters.length - 1;
+        prevLabel.textContent = current > 0 ? chapters[current - 1].dataset.title : '已经是第一章';
+        nextLabel.textContent = current < chapters.length - 1 ? chapters[current + 1].dataset.title : '未完待续';
+        chapterNav.hidden = false;
+        localStorage.setItem(KEY + '-chapter', String(current));
+        closeMenu();
+        closeSettings();
+        if (window.location.hash !== '#' + (current + 1)) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search + '#' + (current + 1));
+        }
+        window.requestAnimationFrame(() => {
+          refreshScrollMetrics();
+          if (opts.restore === true) restoreScroll();
+          else if (opts.keepScroll !== true) window.scrollTo({ top: 0, behavior: 'auto' });
+        });
+      }
+
+      chapterButtons.forEach((button) => button.addEventListener('click', () => showChapter(Number(button.dataset.go), { restore: true })));
+      prev.addEventListener('click', () => showChapter(current - 1));
+      next.addEventListener('click', () => showChapter(current + 1));
+      menuButton.addEventListener('click', () => {
+        const open = document.body.classList.toggle('menu-open');
+        menuButton.setAttribute('aria-expanded', String(open));
+      });
+      scrim.addEventListener('click', closeMenu);
+      toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      settingsButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = readerSettings.classList.toggle('open');
+        settingsButton.setAttribute('aria-expanded', String(open));
+      });
+      readerSettings.addEventListener('click', (event) => event.stopPropagation());
+      document.addEventListener('click', closeSettings);
+
+      document.getElementById('smallerText').addEventListener('click', () => {
+        size = Math.max(minSize, size - 1);
+        root.style.setProperty('--reading-size', size + 'px');
+        localStorage.setItem(KEY + '-font-size', String(size));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      document.getElementById('largerText').addEventListener('click', () => {
+        size = Math.min(maxSize, size + 1);
+        root.style.setProperty('--reading-size', size + 'px');
+        localStorage.setItem(KEY + '-font-size', String(size));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      themeButton.addEventListener('click', () => {
+        const night = root.dataset.theme !== 'night';
+        if (night) root.dataset.theme = 'night';
+        else delete root.dataset.theme;
+        localStorage.setItem(KEY + '-theme', night ? 'night' : 'day');
+        themeButton.setAttribute('aria-label', night ? '切换日间模式' : '切换夜间模式');
+      });
+      fontSelect.addEventListener('change', () => {
+        font = fontStacks[fontSelect.value] ? fontSelect.value : 'songti';
+        root.style.setProperty('--reading-font', fontStacks[font]);
+        localStorage.setItem(KEY + '-font', font);
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      lineHeightRange.addEventListener('input', () => {
+        lineHeight = Number(lineHeightRange.value);
+        root.style.setProperty('--reading-leading', String(lineHeight));
+        lineHeightValue.textContent = lineHeight.toFixed(2).replace(/0$/, '');
+        localStorage.setItem(KEY + '-line-height', String(lineHeight));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      paragraphGapRange.addEventListener('input', () => {
+        paragraphGap = Number(paragraphGapRange.value);
+        root.style.setProperty('--paragraph-gap', paragraphGap + 'em');
+        paragraphGapValue.textContent = paragraphGap.toFixed(2).replace(/0$/, '');
+        localStorage.setItem(KEY + '-paragraph-gap', String(paragraphGap));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+      document.getElementById('resetTypography').addEventListener('click', () => {
+        size = 19;
+        font = 'songti';
+        lineHeight = 1.95;
+        paragraphGap = 1.25;
+        fontSelect.value = font;
+        lineHeightRange.value = String(lineHeight);
+        paragraphGapRange.value = String(paragraphGap);
+        lineHeightValue.textContent = '1.95';
+        paragraphGapValue.textContent = '1.25';
+        root.style.setProperty('--reading-size', size + 'px');
+        root.style.setProperty('--reading-font', fontStacks[font]);
+        root.style.setProperty('--reading-leading', String(lineHeight));
+        root.style.setProperty('--paragraph-gap', paragraphGap + 'em');
+        localStorage.setItem(KEY + '-font-size', String(size));
+        localStorage.setItem(KEY + '-font', font);
+        localStorage.setItem(KEY + '-line-height', String(lineHeight));
+        localStorage.setItem(KEY + '-paragraph-gap', String(paragraphGap));
+        window.requestAnimationFrame(refreshScrollMetrics);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return;
+        if (event.key === 'ArrowLeft') showChapter(current - 1);
+        else if (event.key === 'ArrowRight') showChapter(current + 1);
+        else if (event.key === 'Escape') { closeMenu(); closeSettings(); }
+      });
+
+      let scrollTicking = false;
+      window.addEventListener('scroll', () => {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        window.requestAnimationFrame(() => { scrollTicking = false; paintProgress(); });
+      }, { passive: true });
+      window.addEventListener('resize', () => window.requestAnimationFrame(refreshScrollMetrics));
+      window.addEventListener('beforeunload', saveScroll);
+
+      // 深链接：#3 直接打开第三章
+      const hash = Number((window.location.hash || '').replace('#', ''));
+      const initial = Number.isInteger(hash) && hash >= 1 && hash <= chapters.length ? hash - 1 : current;
+      const started = initial !== 0;
+      chapters.forEach((chapter, i) => chapter.classList.toggle('active', i === 0));
+      chapterButtons.forEach((button, i) => button.setAttribute('aria-current', i === 0 ? 'true' : 'false'));
+      showChapter(initial, { keepScroll: true, restore: started });
+      if (list && chapterButtons[current]) chapterButtons[current].scrollIntoView({ block: 'nearest' });
+    })();
+  </script>
+</body>
+</html>
