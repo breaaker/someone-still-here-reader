@@ -24,8 +24,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Verify dist matches the manuscript
-        run: python3 scripts/reader_build.py validate
+      - name: Rebuild the reader from 正文/
+        run: |
+          python3 scripts/reader_build.py build
+          python3 scripts/reader_build.py validate
+          python3 -m unittest discover -s tests -v
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
